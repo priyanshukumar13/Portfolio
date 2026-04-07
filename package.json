@@ -31,7 +31,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "5.5.0",
-    "react-reconciler": "^0.27.0",
     "sonner": "^2.0.3",
     "tailwind-merge": "3.0.2",
     "tailwindcss-animate": "1.0.7",
