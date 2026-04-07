@@ -23,7 +23,6 @@ import ApprochPage from "../components/Approch";
 import AchievementsSection from "../components/Achievement";
 import PortfolioJourney from "../components/Experience";
 import FeaturedResources from "../components/Resources";
-import { toast } from "sonner";
 
 export default function Home() {
   const testimonials = [
@@ -65,12 +64,12 @@ export default function Home() {
   ];
 
   const handleClick = () => {
-    toast(
-      <div className="flex items-center gap-2">
-        <NotebookText className="w-5 h-5" />
-        <span>Resume is not available yet</span>
-      </div>
-    );
+    const link = document.createElement('a');
+    link.href = '/resume.pdf';
+    link.download = 'Abhay_Pratap_Singh_Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
