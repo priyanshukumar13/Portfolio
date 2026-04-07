@@ -90,7 +90,7 @@ export default function Home() {
           >
             <div className="relative w-48 h-48 md:w-84 md:h-84 rounded-full overflow-hidden border-4 border-gray-800">
               <Image
-                src="/AtharvaKote.png"
+                src="/Atharvakote.png"
                 width={192}
                 height={192}
                 className="w-full h-full"
