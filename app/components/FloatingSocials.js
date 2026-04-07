@@ -5,28 +5,29 @@ import {
   FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaGit, FaGithub, FaDocker,
   FaPython, FaJava, FaPhp, FaAws, FaLinux, FaWindows, FaDatabase, FaNpm, FaFigma,
 } from "react-icons/fa";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+const technologies = [
+  { icon: <FaHtml5 />, name: "HTML5" },
+  { icon: <FaCss3Alt />, name: "CSS3" },
+  { icon: <FaJs />, name: "JavaScript" },
+  { icon: <FaReact />, name: "React" },
+  { icon: <FaNodeJs />, name: "Node.js" },
+  { icon: <FaGit />, name: "Git" },
+  { icon: <FaGithub />, name: "GitHub" },
+  { icon: <FaDocker />, name: "Docker" },
+  { icon: <FaPython />, name: "Python" },
+  { icon: <FaJava />, name: "Java" },
+  { icon: <FaPhp />, name: "PHP" },
+  { icon: <FaAws />, name: "AWS" },
+  { icon: <FaLinux />, name: "Linux" },
+  { icon: <FaWindows />, name: "Windows" },
+  { icon: <FaDatabase />, name: "Database" },
+  { icon: <FaNpm />, name: "NPM" },
+  { icon: <FaFigma />, name: "Figma" },
+];
 
 const FloatingSocials = () => {
-  const technologies = [
-    { icon: <FaHtml5 />, name: "HTML5" },
-    { icon: <FaCss3Alt />, name: "CSS3" },
-    { icon: <FaJs />, name: "JavaScript" },
-    { icon: <FaReact />, name: "React" },
-    { icon: <FaNodeJs />, name: "Node.js" },
-    { icon: <FaGit />, name: "Git" },
-    { icon: <FaGithub />, name: "GitHub" },
-    { icon: <FaDocker />, name: "Docker" },
-    { icon: <FaPython />, name: "Python" },
-    { icon: <FaJava />, name: "Java" },
-    { icon: <FaPhp />, name: "PHP" },
-    { icon: <FaAws />, name: "AWS" },
-    { icon: <FaLinux />, name: "Linux" },
-    { icon: <FaWindows />, name: "Windows" },
-    { icon: <FaDatabase />, name: "Database" },
-    { icon: <FaNpm />, name: "NPM" },
-    { icon: <FaFigma />, name: "Figma" },
-  ];
 
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [mounted, setMounted] = useState(false);
@@ -49,10 +50,10 @@ const FloatingSocials = () => {
     setMounted(true);
   }, []);
 
-  const randomPosition = () => ({
+  const randomPosition = useCallback(() => ({
     x: Math.random() * windowSize.width - windowSize.width / 2,
     y: Math.random() * windowSize.height - windowSize.height / 2,
-  });
+  }), [windowSize.width, windowSize.height]);
 
   const floatingConfig = useMemo(() => {
     if (!mounted || !windowSize.width || !windowSize.height) return [];
@@ -70,7 +71,7 @@ const FloatingSocials = () => {
         top: `${Math.random() * 100}vh`,
       };
     });
-  }, [mounted, windowSize.width, windowSize.height]);
+  }, [mounted, windowSize.width, windowSize.height, randomPosition]);
 
   if (!mounted) return null;
 
