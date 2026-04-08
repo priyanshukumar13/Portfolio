@@ -1,17 +1,13 @@
+import { fileURLToPath } from "url";
 import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["picsum.photos"], // Add the hostname here
-  },
-  webpack(config) {
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      react: path.resolve("./node_modules/react"),
-      "react-dom": path.resolve("./node_modules/react-dom"),
-    };
-    return config;
+    domains: ["picsum.photos"],
   },
 };
 

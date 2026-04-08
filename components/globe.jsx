@@ -1,18 +1,40 @@
-"use client";;
+"use client";
 import { useEffect, useRef, useState } from "react";
-import { Color, Scene, Fog, PerspectiveCamera, Vector3 } from "three";
-import ThreeGlobe from "three-globe";
-import { useThree, Canvas, extend } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import countries from "@/data/globe.json";
 
-extend({ ThreeGlobe: ThreeGlobe });
+let Canvas, useThree, extend, OrbitControls, Color, Scene, Fog, PerspectiveCamera, Vector3;
+let ThreeGlobe, countries;
+let importsLoaded = false;
+
+async function loadImports() {
+  if (importsLoaded) return;
+  
+  const fiber = await import("@react-three/fiber");
+  Canvas = fiber.Canvas;
+  useThree = fiber.useThree;
+  extend = fiber.extend;
+  
+  const drei = await import("@react-three/drei");
+  OrbitControls = drei.OrbitControls;
+  
+  const three = await import("three");
+  Color = three.Color;
+  Scene = three.Scene;
+  Fog = three.Fog;
+  PerspectiveCamera = three.PerspectiveCamera;
+  Vector3 = three.Vector3;
+  
+  ThreeGlobe = (await import("three-globe")).default;
+  countries = (await import("@/data/globe.json")).default;
+  
+  importsLoaded = true;
+}
 
 const RING_PROPAGATION_SPEED = 3;
 const aspect = 1.2;
 const cameraZ = 300;
 
 let numbersOfRings = [0];
+let extendCalled = false;
 
 export function Globe({
   globeConfig,
@@ -21,6 +43,7 @@ export function Globe({
   const globeRef = useRef(null);
   const groupRef = useRef();
   const [isInitialized, setIsInitialized] = useState(false);
+  const [importsReady, setImportsReady] = useState(false);
 
   const defaultProps = {
     pointSize: 1,
@@ -39,13 +62,20 @@ export function Globe({
     ...globeConfig,
   };
 
-  // Initialize globe only once
+  // Load imports and initialize globe only once
   useEffect(() => {
-    if (!globeRef.current && groupRef.current) {
-      globeRef.current = new ThreeGlobe();
-      (groupRef.current).add(globeRef.current);
-      setIsInitialized(true);
-    }
+    loadImports().then(() => {
+      setImportsReady(true);
+      if (!extendCalled) {
+        extend({ ThreeGlobe: ThreeGlobe });
+        extendCalled = true;
+      }
+      if (!globeRef.current && groupRef.current) {
+        globeRef.current = new ThreeGlobe();
+        (groupRef.current).add(globeRef.current);
+        setIsInitialized(true);
+      }
+    });
   }, []);
 
   // Build material when globe is initialized or when relevant props change
@@ -177,19 +207,32 @@ export function WebGLRendererConfig() {
   const { gl, size } = useThree();
 
   useEffect(() => {
-    gl.setPixelRatio(window.devicePixelRatio);
-    gl.setSize(size.width, size.height);
-    // gl.setClearColor(0xffaaff, 0);
-    gl.setClearColor(0x000000, 0);  // Black with 0 alpha (transparent)
+    if (typeof window !== "undefined") {
+      gl.setPixelRatio(window.devicePixelRatio);
+      gl.setSize(size.width, size.height);
+      gl.setClearColor(0x000000, 0);
+    }
   }, []);
 
   return null;
 }
 
 export function World(props) {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    loadImports().then(() => {
+      setReady(true);
+    });
+  }, []);
+
+  if (!ready || !Canvas || !Scene || !PerspectiveCamera) {
+    return <div className="w-full h-full" />;
+  }
+
   const { globeConfig } = props;
   const scene = new Scene();
-//   scene.fog = new Fog(0xffffff, 400, 2000);
+  
   return (
     <Canvas scene={scene} camera={new PerspectiveCamera(50, aspect, 180, 1800)}>
       <WebGLRendererConfig />

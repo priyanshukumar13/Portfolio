@@ -8,9 +8,11 @@ import AnimatedContent from "./animations/AnimatedContent";
 import { ChevronRight } from "lucide-react";
 import { JourneyButton } from "@/components/EnternalButton";
 import FloatingSocials from "./components/FloatingSocials";
-// Dynamically import the Globe component to avoid SSR issues
+
+// Dynamically load Globe on client side only to prevent server-side window access errors
 const World = dynamic(() => import("@/components/globe").then((m) => m.World), {
   ssr: false,
+  loading: () => <div className="w-full h-full" />,
 });
 
 export default function MagicalWebpage() {
